@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Metabolik Plan">
+  <title>Metabolik Denge &amp; Glisemik Koruma</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #151f32;
+      --card-hover: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --green: #10b981;
+      --green-soft: rgba(16, 185, 129, 0.15);
+      --blue: #3b82f6;
+      --blue-soft: rgba(59, 130, 246, 0.15);
+      --yellow: #eab308;
+      --yellow-soft: rgba(234, 179, 8, 0.15);
+      --orange: #f97316;
+      --orange-soft: rgba(249, 115, 22, 0.15);
+      --purple: #a855f7;
+      --purple-soft: rgba(168, 85, 247, 0.15);
+      --cyan: #06b6d4;
+      --cyan-soft: rgba(6, 182, 212, 0.15);
+      --rose: #f43f5e;
+      --rose-soft: rgba(244, 63, 94, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: max(14px, env(safe-area-inset-top)) 16px 96px 16px;
+      min-height: 100vh;
+    }
+
+    /* Ust Baslik ve Motivasyon Karti */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .app-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #34d399, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .profile-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .motivation-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(59, 130, 246, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mot-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .mot-text {
+      font-size: 0.83rem;
+      line-height: 1.38;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    /* Makro & Kalori Pano Karti */
+    .macro-dashboard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .kcal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .kcal-main {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .kcal-sub {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .main-bar-bg {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .main-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #a855f7);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .macro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .macro-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 10px;
+    }
+
+    .macro-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .macro-val {
+      font-size: 0.88rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .mini-bar-bg {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    /* Su Karti */
+    .water-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 15px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .water-info {
+      flex: 1;
+    }
+
+    .water-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .water-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .water-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .w-btn {
+      border: none;
+      background: var(--cyan);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .w-btn.minus {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      padding: 8px 10px;
+    }
+
+    /* Gun Secici */
+    .day-scroller {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+    }
+    .day-scroller::-webkit-scrollbar { display: none; }
+
+    .day-chip {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .day-chip.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #000;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Ogun Kartlari */
+    .meal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .meal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, background 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .meal-card:active {
+      transform: scale(0.985);
+    }
+
+    .meal-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+    }
+
+    .meal-card.c-green::before { background: var(--green); }
+    .meal-card.c-blue::before { background: var(--blue); }
+    .meal-card.c-yellow::before { background: var(--yellow); }
+    .meal-card.c-orange::before { background: var(--orange); }
+    .meal-card.c-purple::before { background: var(--purple); }
+
+    .meal-check {
+      width: 25px;
+      height: 25px;
+      border-radius: 8px;
+      border: 2px solid #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.2s;
+    }
+
+    .meal-card.done .meal-check {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .meal-card.done .meal-check::after {
+      content: '\2713';
+      color: #000;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .meal-content {
+      flex: 1;
+    }
+
+    .meal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      gap: 6px;
+    }
+
+    .meal-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .c-green .meal-badge { background: var(--green-soft); color: var(--green); }
+    .c-blue .meal-badge { background: var(--blue-soft); color: var(--blue); }
+    .c-yellow .meal-badge { background: var(--yellow-soft); color: var(--yellow); }
+    .c-orange .meal-badge { background: var(--orange-soft); color: var(--orange); }
+    .c-purple .meal-badge { background: var(--purple-soft); color: var(--purple); }
+
+    .meal-time {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .meal-title {
+      font-size: 0.94rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .meal-macros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .m-pill {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .meal-role {
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-top: 7px;
+      font-style: italic;
+    }
+
+    .meal-card.done .meal-title {
+      text-decoration: line-through;
+      color: #64748b;
+    }
+    .meal-card.done .meal-macros,
+    .meal-card.done .meal-role {
+      opacity: 0.45;
+    }
+
+    /* Cep Kartlari ve Kalkan Sekmesi */
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .info-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rule-box {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .rule-green {
+      background: var(--green-soft);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #d1fae5;
+    }
+
+    .rule-red {
+      background: var(--rose-soft);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #ffe4e6;
+    }
+
+    .rule-quote {
+      background: var(--blue-soft);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #dbeafe;
+      font-style: italic;
+    }
+
+    /* Alt Sabit Navigasyon */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 17, 32, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 12px max(12px, env(safe-area-inset-bottom)) 12px;
+      z-index: 200;
+    }
+
+    .nav-item {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 6px 0;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .nav-item .nav-icon {
+      font-size: 1.2rem;
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .reset-day-btn {
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="app-title">&#129367; Metabolik Kalkan</div>
+    <div class="profile-pill">Mehmet Tan&#252;zel &bull; 1830 kcal</div>
+  </div>
+
+  <!-- Gunluk Plan Sekmesi -->
+  <div id="view-plan">
+    <div class="motivation-banner" id="mot-banner">
+      <div class="mot-icon" id="mot-icon">&#9889;</div>
+      <div class="mot-text" id="mot-text"></div>
+    </div>
+
+    <div class="macro-dashboard">
+      <div class="kcal-header">
+        <span class="kcal-main" id="kcal-val">0 / 1830 kcal</span>
+        <span class="kcal-sub" id="kcal-rem">1830 kcal kald&#305;</span>
+      </div>
+      <div class="main-bar-bg">
+        <div class="main-bar-fill" id="kcal-bar"></div>
+      </div>
+
+      <div class="macro-grid">
+        <div class="macro-box">
+          <div class="macro-label"><span>&#128170; Protein</span><span id="p-pct">%0</span></div>
+          <div class="macro-val" id="p-val" style="color: var(--blue);">0 / 149g</div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" id="p-bar" style="background: var(--blue);"></div></div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-label"><span>&#127806; Karb</span><span id="c-pct">%0</span></div>
+          <div class="macro-val" id="c-val" style="color: var(--green);">0 / 160g</div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" id="c-bar" style="background: var(--green);"></div></div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-label"><span>&#129361; Ya&#287;</span><span id="f-pct">%0</span></div>
+          <div class="macro-val" id="f-val" style="color: var(--orange);">0 / 64g</div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" id="f-bar" style="background: var(--orange);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="water-card">
+      <div class="water-info">
+        <div class="water-title">&#128167; G&#252;nl&#252;k Hidrasyon: <span id="w-liters">0.0 / 3.0 L</span></div>
+        <div class="water-sub">&#214;&#287;&#252;n aralar&#305;na yayarak yudumla (<span id="w-glasses">0</span>/12 Bardak)</div>
+      </div>
+      <div class="water-actions">
+        <button class="w-btn minus" onclick="updateWater(-1)">-</button>
+        <button class="w-btn" onclick="updateWater(1)">+1 Bardak</button>
+      </div>
+    </div>
+
+    <div class="day-scroller" id="day-tabs"></div>
+
+    <div class="meal-list" id="meal-container"></div>
+
+    <button class="reset-day-btn" onclick="resetCurrentDay()">&#128260; Se&#231;ili G&#252;n&#252;n &#304;&#351;aretlerini S&#305;f&#305;rla</button>
+  </div>
+
+  <!-- Restoran Cep Kartlari Sekmesi -->
+  <div id="view-cards" style="display: none;">
+    <div class="info-card">
+      <div class="info-title">&#127831; A) Tavuk D&#252;nyas&#305; Cep Kart&#305;</div>
+      <div class="rule-box rule-green"><strong>&#128994; Ye&#351;il I&#351;&#305;k (Serbest):</strong> &#350;efin Tavas&#305;, K&#246;zl&#252;ce, Alinazik Tavuk, Kekiklim.</div>
+      <div class="rule-box rule-red"><strong>&#128308; K&#305;rm&#305;z&#305; I&#351;&#305;k (Yasak):</strong> Bi K&#246;ri, F&#252;l F&#252;l, Kremal&#305; Mantarl&#305; ve Ka&#351;arl&#305; t&#252;m &#231;e&#351;itler (1300+ kcal ya&#287; bombas&#305;).</div>
+      <div class="rule-box rule-quote"><strong>&#128172; Garsona S&#246;ylenecek C&#252;mle:</strong> &ldquo;&#350;efin Tavas&#305; (veya K&#246;zl&#252;ce) alabilir miyim? Makarnay&#305; tam koymay&#305;n, yar&#305;m porsiyon olsun. Salatan&#305;n sosunu &#252;zerine d&#246;kmeyin, sadece zeytinya&#287;&#305; ve limon gelsin.&rdquo;</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">&#127858; B) AVM Ev Yemekleri B&#252;fesi</div>
+      <div class="rule-box rule-green"><strong>&#128994; Ye&#351;il I&#351;&#305;k:</strong> Derisiz f&#305;r&#305;n tavuk, ha&#351;lama et, &#305;zgara k&#246;fte, susuz taze fasulye/nohut, bulgur pilav&#305;, cac&#305;k/yo&#287;urt, mercimek &#231;orbas&#305;.</div>
+      <div class="rule-box rule-red"><strong>&#128308; K&#305;rm&#305;z&#305; I&#351;&#305;k:</strong> Karn&#305;yar&#305;k, musakka (k&#305;zartma ya&#287;l&#305;), unlu meyaneli g&#252;ve&#231; soslar&#305;, beyaz pirin&#231; pilav&#305;.</div>
+      <div class="rule-box rule-quote"><strong>&#128172; Servis Personeline C&#252;mle:</strong> &ldquo;Yeme&#287;in suyunu/dibindeki ya&#287;&#305; s&#252;zerek delikli kep&#231;eyle koyabilir misiniz? Pirin&#231; pilav&#305; yerine 4 ka&#351;&#305;k bulgur ve yan&#305;na yo&#287;urt alay&#305;m.&rdquo;</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">&#127894;&#65039; C) Askeri Restoranlar &amp; Orduevleri</div>
+      <div class="rule-box rule-green"><strong>&#128994; Ye&#351;il I&#351;&#305;k:</strong> Tavuk &#351;i&#351; (160g net), Izgara k&#246;fte (4-5 adet), Ha&#351;lama dana eti, k&#246;z biber-domates, ayran.</div>
+      <div class="rule-box rule-red"><strong>&#128308; K&#305;rm&#305;z&#305; I&#351;&#305;k:</strong> Tabakta otomatik gelen patates k&#305;zartmas&#305;, tereya&#287;l&#305; pirin&#231; pilav&#305; ve ya&#287;l&#305; t&#305;rnak pide (Tek ba&#351;&#305;na +550 kcal ekler!).</div>
+      <div class="rule-box rule-quote"><strong>&#128172; Garsona S&#246;ylenecek C&#252;mle:</strong> &ldquo;Tavuk &#351;i&#351; (veya k&#246;fte) rica ediyorum ama taba&#287;a pilav, patates k&#305;zartmas&#305; ve pide kesinlikle koymay&#305;n. Onlar&#305;n yerine k&#246;z biber, domates ve s&#246;&#287;&#252;&#351; ye&#351;illik koyun; yan&#305;na 1 ayran.&rdquo;</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">&#129367; D) Salata / Bowl Zincirleri</div>
+      <div class="rule-box rule-green"><strong>&#128994; Form&#252;l:</strong> %70 Ye&#351;illik + 1 Ka&#351;&#305;k (50g) Kinoa/Karabu&#287;day + 150g Izgara Tavuk/Ton Bal&#305;&#287;&#305; + 30g Nohut.</div>
+      <div class="rule-box rule-red"><strong>&#128308; K&#305;rm&#305;z&#305; I&#351;&#305;k:</strong> Sezar/Ranch/Ball&#305; Hardal haz&#305;r soslar, m&#305;s&#305;r, kruton ekmek, karamelize ceviz.</div>
+      <div class="rule-box rule-quote"><strong>&#128172; Sipari&#351; C&#252;mlesi:</strong> &ldquo;Sos olarak haz&#305;r sos koymay&#305;n; ayr&#305; k&#252;&#231;&#252;k kapta 1 tatl&#305; ka&#351;&#305;&#287;&#305; zeytinya&#287;&#305;, bol limon ve 1 &#231;ay ka&#351;&#305;&#287;&#305; &#351;ekersiz hardal rica ediyorum.&rdquo;</div>
+    </div>
+  </div>
+
+  <!-- Imza Kase & Glisemik Kalkan Sekmesi -->
+  <div id="view-shield" style="display: none;">
+    <div class="info-card">
+      <div class="info-title">&#129379; &#214;zel &#304;mza Kar&#305;&#351;&#305;m&#305;n&#305;z (302 kcal)</div>
+      <div class="rule-box rule-green">
+        <strong>Form&#252;l:</strong> 30g Yulaf + 80g Lor + 15g Bal + 10g Ceviz<br>
+        <strong>Makrolar:</strong> 302 kcal &bull; 19.5g Protein &bull; 33g Karb &bull; 10.5g Ya&#287;
+      </div>
+      <div class="rule-box rule-quote">
+        <strong>&#9728;&#65039; Sabah (10:30) Alt&#305;n Kural&#305;:</strong> Yan&#305;na mutlaka <strong>2 adet ha&#351;lanm&#305;&#351; yumurta</strong> ekleyin. Yumurta proteini ve ya&#287;&#305;, baldaki basit &#351;ekerin kana kar&#305;&#351;ma h&#305;z&#305;n&#305; yar&#305; yar&#305;ya yava&#351;lat&#305;r ve 13:00 hipoglisemisini engeller.
+      </div>
+      <div class="rule-box rule-quote">
+        <strong>&#127774; &#304;kindi (17:30) Alt&#305;n Kural&#305;:</strong> Oldu&#287;u gibi (302 kcal) t&#252;ketebilirsiniz; &#252;zerine <strong>1 &#231;ay ka&#351;&#305;&#287;&#305; toz tar&#231;&#305;n</strong> eklemeniz ins&#252;lin duyarl&#305;l&#305;&#287;&#305;n&#305; art&#305;r&#305;r.
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">&#128737;&#65039; Panik Atak &amp; Gece A&#231;l&#305;&#287;&#305; Acil Protokol&#252;</div>
+      <div class="rule-box rule-green">
+        <strong>1. Saat 23:30 Kural&#305; (Tart&#305;&#351;mas&#305;z):</strong> Ak&#351;am 20:00'den 01:30'a kadar asla a&#231; beklenmeyecek. Tok hissetseniz bile 23:30'da Gece Kilidi t&#252;ketilecek. Sabaha kar&#351;&#305; 04:00'te karaci&#287;er glikojeninin bitip adrenalin/panik de&#351;arj&#305; yaratmas&#305;n&#305; kilitler.
+      </div>
+      <div class="rule-box rule-quote">
+        <strong>2. Maksimum 4 Saat Kural&#305;:</strong> Uyan&#305;k oldu&#287;unuz s&#252;re boyunca iki &#246;&#287;&#252;n aras&#305; asla 4.5 saati ge&#231;meyecek. Toplant&#305;/trafik uzarsa cepte her zaman <strong>30g &#231;i&#287; badem/ceviz</strong> bulunacak.
+      </div>
+      <div class="rule-box rule-red">
+        <strong>3. Kafein Kesim Saati (17:30):</strong> Saat 17:30'dan sonra kahve ve demli siyah &#231;ay kesilecek; yerine melisa, papatya veya rezene &#231;ay&#305; tercih edilecek.
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">&#128995; 23:30 Gece Kilidi 5 Alternatif Se&#231;enek</div>
+      <div class="rule-box rule-green">
+        &bull; <strong>Se&#231;enek 1:</strong> 100g S&#252;zme Yo&#287;urt + 1 Wasa (135 kcal)<br>
+        &bull; <strong>Se&#231;enek 2:</strong> 80g Lor Peyniri + 1 Tam Ceviz (130 kcal)<br>
+        &bull; <strong>Se&#231;enek 3:</strong> 150 ml Sade Kefir + 1 TK Kabak &#199;ekirde&#287;i (125 kcal)<br>
+        &bull; <strong>Se&#231;enek 4:</strong> 1 Ha&#351;lanm&#305;&#351; Yumurta + 1 Salatal&#305;k (85 kcal)<br>
+        &bull; <strong>Se&#231;enek 5:</strong> 40g S&#252;zme Peynir + 3 &#199;i&#287; Badem (135 kcal)
+      </div>
+    </div>
+  </div>
+
+  <!-- Alt Navigasyon -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-plan" onclick="switchView('plan')">
+      <span class="nav-icon">&#128197;</span>
+      <span>G&#252;nl&#252;k Plan</span>
+    </button>
+    <button class="nav-item" id="nav-cards" onclick="switchView('cards')">
+      <span class="nav-icon">&#127869;&#65039;</span>
+      <span>Cep Kartlar&#305;</span>
+    </button>
+    <button class="nav-item" id="nav-shield" onclick="switchView('shield')">
+      <span class="nav-icon">&#128737;&#65039;</span>
+      <span>Glisemik Kalkan</span>
+    </button>
+  </nav>
+
+  <script>
+    const weekDays = [
+      { id: "pzt", label: "Pazartesi", short: "Pzt" },
+      { id: "sal", label: "Sal\u0131", short: "Sal" },
+      { id: "car", label: "\u00C7ar\u015Famba", short: "\u00C7ar" },
+      { id: "per", label: "Per\u015Fembe", short: "Per" },
+      { id: "cum", label: "Cuma", short: "Cum" },
+      { id: "cmt", label: "Cumartesi", short: "Cmt" },
+      { id: "paz", label: "Pazar", short: "Paz" }
+    ];
+
+    const roles = [
+      "Gece a\u00E7l\u0131\u011F\u0131n\u0131 sonland\u0131rma, g\u00FCne tok ve enerjik ba\u015Flama.",
+      "\u0130\u015F temposunda odaklanmay\u0131 koruma, s\u0131f\u0131r a\u011F\u0131rl\u0131k/uyku hissi.",
+      "Ak\u015Fam yeme\u011Fine kurt gibi a\u00E7 oturmay\u0131 ve hipoglisemiyi \u00F6nleme.",
+      "Glikojen depolar\u0131n\u0131 doldurma, temiz protein ile kas onar\u0131m\u0131.",
+      "Kazein + lif ile saat 02:00 uykusuna tok girme, panik ata\u011F\u0131 \u00F6nleme."
+    ];
+
+    const menuData = {
+      pzt: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "\u0130mza Yulaf Kasesi + 2 Ha\u015Flanm\u0131\u015F Yumurta", kcal: 440, p: 31, c: 34, f: 20 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "AVM Ev Yeme\u011Fi (Komb. 1): Derisiz F\u0131r\u0131n Tavuk + S\u00FCz\u00FClm\u00FC\u015F Taze Fasulye + 4 YK Bulgur", kcal: 510, p: 45, c: 45, f: 16 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "\u0130mza Yulaf Kasesi (Tar\u00E7\u0131n ilaveli)", kcal: 302, p: 20, c: 33, f: 11 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "Evde Pratik: 160g Izgara/Airfryer Somon + F\u0131r\u0131n Kabak & Brokoli + 1 Dilim Tam \u00C7avdar", kcal: 460, p: 42, c: 35, f: 16 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 1: 100g S\u00FCzme Yo\u011Furt + 1 Wasa", kcal: 135, p: 11, c: 10, f: 5 }
+      ],
+      sal: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "3 Yumurtal\u0131 Sebzeli Omlet + 50g Lor + 1 Dilim Ek\u015Fi Mayal\u0131 Ekmek + 5 Zeytin", kcal: 395, p: 29, c: 28, f: 18 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "Tavuk D\u00FCnyas\u0131: \u015Eefin Tavas\u0131 + Yar\u0131m Porsiyon Makarna + Sossuz Salata", kcal: 560, p: 48, c: 52, f: 18 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "\u0130mza Yulaf Kasesi", kcal: 302, p: 20, c: 33, f: 11 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "Orduevi / Ev: 160g Tavuk \u015Ei\u015F + K\u00F6z Biber/Domates + S\u00F6\u011F\u00FC\u015F Salata + 1 Kutu Ayran", kcal: 380, p: 42, c: 24, f: 12 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 2: 80g Lor Peyniri + 1 Tam Ceviz", kcal: 130, p: 13, c: 4, f: 7 }
+      ],
+      car: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "\u0130mza Yulaf Kasesi + 2 Ha\u015Flanm\u0131\u015F Yumurta", kcal: 440, p: 31, c: 34, f: 20 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "Salata / Bowl Zinciri: 150g Tavuk + 50g Kinoa + Bol Ye\351illik + Zeytinya\u011F\u0131/Limon/Hardal Sos", kcal: 465, p: 44, c: 42, f: 14 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "200 ml Kefir + 1 K\u00FC\u00E7\u00FCk Muz + 10 \u00C7i\u011F Badem", kcal: 260, p: 11, c: 34, f: 9 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "AVM Ev Yeme\u011Fi (Komb. 3): 4 Adet Izgara K\u00F6fte + Yo\u011Furtlu Semizotu + 1 Kase Mercimek \u00C7orbas\u0131", kcal: 520, p: 45, c: 42, f: 18 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 3: 150 ml Sade Kefir + 1 TK Kabak \u00C7ekirde\u011Fi", kcal: 125, p: 9, c: 8, f: 6 }
+      ],
+      per: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "2 Yumurta + 50g Az Ya\u011Fl\u0131 Beyaz Peynir + Bol S\u00F6\u011F\u00FC\u015F + 2 Dilim Wasa Gevre\u011Fi", kcal: 370, p: 25, c: 28, f: 16 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "Orduevi Alakart: 1 Porsiyon Izgara K\u00F6fte (4-5 adet) + Ya\u011Fs\u0131z \u00C7oban Salata + 1 Ha\u015Flanm\u0131\u015F/K\u00F6z Patates", kcal: 460, p: 42, c: 38, f: 16 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "\u0130mza Yulaf Kasesi", kcal: 302, p: 20, c: 33, f: 11 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "Evde Pratik: 180g Hindi/Tavuk Sote + 4 YK Ha\u015Flanm\u0131\u015F Karabu\u011Fday/Bulgur + Kase Yo\u011Furt", kcal: 510, p: 48, c: 45, f: 14 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 1: 100g S\u00FCzme Yo\u011Furt + 1 Wasa", kcal: 135, p: 11, c: 10, f: 5 }
+      ],
+      cum: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "\u0130mza Yulaf Kasesi + 2 Ha\u015Flanm\u0131\u015F Yumurta", kcal: 440, p: 31, c: 34, f: 20 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "AVM Ev Yeme\u011Fi (Komb. 2): Susuz Kuru Fasulye + 80g Ha\u015Flama Et + 1 Kase Cac\u0131k", kcal: 540, p: 44, c: 52, f: 16 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "100g S\u00FCzme Yo\u011Furt + 1 Porsiyon Yaban Mersini/Elma + 2 Ceviz", kcal: 240, p: 12, c: 26, f: 10 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "Tavuk D\u00FCnyas\u0131: K\u00F6zl\u00FCce Tavuk + Yar\u0131m Makarna + Sossuz Salata", kcal: 590, p: 48, c: 48, f: 19 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 4: 1 Ha\u015Flanm\u0131\u015F Yumurta + 1 Salatal\u0131k", kcal: 85, p: 7, c: 3, f: 5 }
+      ],
+      cmt: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "Hafta Sonu Menemeni (2 Yumurta, 1 YK Zeytinya\u011F\u0131) + 60g Lor + 1 Dilim Tam Bu\u011Fday Ekme\u011Fi", kcal: 410, p: 28, c: 32, f: 18 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "Bowl / Ev Salatas\u0131: 1 Kutu Suda Ton Bal\u0131\u011F\u0131 (130g) + 4 YK Ha\u015Flanm\u0131\u015F Nohut + Bol Ye\u015Fillik", kcal: 470, p: 44, c: 40, f: 14 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "\u0130mza Yulaf Kasesi", kcal: 302, p: 20, c: 33, f: 11 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "Orduevi / Restoran: 200g Izgara \u00C7ipura/Levrek + Bol Roka Salatas\u0131 + 1 Dilim F\u0131r\u0131n Patates", kcal: 510, p: 45, c: 38, f: 17 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 5: 40g S\u00FCzme Peynir + 3 \u00C7i\u011F Badem", kcal: 135, p: 10, c: 4, f: 9 }
+      ],
+      paz: [
+        { slot: "1. Kahvalt\u0131", time: "10:30 \u2013 11:00", color: "c-green", title: "\u0130mza Yulaf Kasesi + 2 Ha\u015Flanm\u0131\u015F Yumurta", kcal: 440, p: 31, c: 34, f: 20 },
+        { slot: "2. \u00D6\u011Fle (D\u0131\u015Far\u0131da)", time: "14:30 \u2013 15:00", color: "c-blue", title: "AVM / Ev (Komb. 4): Sebzeli Tavuk Sote + 4 YK Bulgur Pilav\u0131 + 150g Yo\u011Furt", kcal: 490, p: 44, c: 46, f: 14 },
+        { slot: "3. \u0130kindi K\u00F6pr\u00FCs\u00FC", time: "17:30 \u2013 18:00", color: "c-yellow", title: "\u0130mza Yulaf Kasesi", kcal: 302, p: 20, c: 33, f: 11 },
+        { slot: "4. Ak\u015Fam Yeme\u011Fi", time: "20:00 \u2013 20:30", color: "c-orange", title: "Evde Hafif Kapan\u0131\u015F: 150g Izgara Dana Bonfile/K\u00F6fte + Buharda Brokoli & Yo\u011Furt", kcal: 470, p: 42, c: 32, f: 17 },
+        { slot: "5. Gece Kilidi", time: "23:30 \u2013 00:00", color: "c-purple", title: "Se\u00E7enek 2: 80g Lor Peyniri + 1 Tam Ceviz", kcal: 130, p: 13, c: 4, f: 7 }
+      ]
+    };
+
+    const jsDayMap = ["paz", "pzt", "sal", "car", "per", "cum", "cmt"];
+    const todayId = jsDayMap[new Date().getDay()] || "pzt";
+
+    let appState = JSON.parse(localStorage.getItem("mehmet_diet_app_v1")) || {
+      currentDay: todayId,
+      checked: {},
+      water: {}
+    };
+
+    function save() {
+      localStorage.setItem("mehmet_diet_app_v1", JSON.stringify(appState));
+    }
+
+    function switchView(viewName) {
+      document.getElementById("view-plan").style.display = viewName === "plan" ? "block" : "none";
+      document.getElementById("view-cards").style.display = viewName === "cards" ? "block" : "none";
+      document.getElementById("view-shield").style.display = viewName === "shield" ? "block" : "none";
+
+      document.getElementById("nav-plan").classList.toggle("active", viewName === "plan");
+      document.getElementById("nav-cards").classList.toggle("active", viewName === "cards");
+      document.getElementById("nav-shield").classList.toggle("active", viewName === "shield");
+      window.scrollTo(0, 0);
+    }
+
+    function selectDay(dayId) {
+      appState.currentDay = dayId;
+      save();
+      render();
+    }
+
+    function toggleMeal(idx) {
+      const key = `${appState.currentDay}_${idx}`;
+      appState.checked[key] = !appState.checked[key];
+      save();
+      render();
+    }
+
+    function updateWater(delta) {
+      const d = appState.currentDay;
+      const cur = appState.water[d] || 0;
+      appState.water[d] = Math.max(0, Math.min(16, cur + delta));
+      save();
+      render();
+    }
+
+    function resetCurrentDay() {
+      if (confirm("Se\u00E7ili g\u00FCn\u00FCn \u00F6\u011F\u00FCn ve su i\u015Faretlerini s\u0131f\u0131rlamak istiyor musunuz?")) {
+        const d = appState.currentDay;
+        for (let i = 0; i < 5; i++) {
+          delete appState.checked[`${d}_${i}`];
+        }
+        appState.water[d] = 0;
+        save();
+        render();
+      }
+    }
+
+    function render() {
+      // Gun sekmeleri
+      const tabsEl = document.getElementById("day-tabs");
+      tabsEl.innerHTML = "";
+      weekDays.forEach(d => {
+        const btn = document.createElement("button");
+        btn.className = `day-chip ${appState.currentDay === d.id ? "active" : ""}`;
+        btn.innerText = d.label;
+        btn.onclick = () => selectDay(d.id);
+        tabsEl.appendChild(btn);
+      });
+
+      const meals = menuData[appState.currentDay] || menuData.pzt;
+      const mealContainer = document.getElementById("meal-container");
+      mealContainer.innerHTML = "";
+
+      let sumKcal = 0, sumP = 0, sumC = 0, sumF = 0, doneCount = 0;
+
+      meals.forEach((m, idx) => {
+        const key = `${appState.currentDay}_${idx}`;
+        const isDone = !!appState.checked[key];
+        if (isDone) {
+          sumKcal += m.kcal;
+          sumP += m.p;
+          sumC += m.c;
+          sumF += m.f;
+          doneCount++;
+        }
+
+        const card = document.createElement("div");
+        card.className = `meal-card ${m.color} ${isDone ? "done" : ""}`;
+        card.onclick = () => toggleMeal(idx);
+
+        card.innerHTML = `
+          <div class="meal-check"></div>
+          <div class="meal-content">
+            <div class="meal-header">
+              <span class="meal-badge">${m.slot}</span>
+              <span class="meal-time">\u23F0 ${m.time}</span>
+            </div>
+            <div class="meal-title">${m.title}</div>
+            <div class="meal-macros">
+              <span class="m-pill">\uD83D\uDD25 ${m.kcal} kcal</span>
+              <span class="m-pill">\uD83D\uDCAA ${m.p}g P</span>
+              <span class="m-pill">\uD83C\uDF3E ${m.c}g K</span>
+              <span class="m-pill">\uD83E\uDD51 ${m.f}g Y</span>
+            </div>
+            <div class="meal-role">${roles[idx]}</div>
+          </div>
+        `;
+        mealContainer.appendChild(card);
+      });
+
+      // Kalori ve Makro guncellemesi
+      const targetKcal = 1830, targetP = 149, targetC = 160, targetF = 64;
+      const remKcal = Math.max(0, targetKcal - sumKcal);
+      const kcalPct = Math.min(100, Math.round((sumKcal / targetKcal) * 100));
+      const pPct = Math.min(100, Math.round((sumP / targetP) * 100));
+      const cPct = Math.min(100, Math.round((sumC / targetC) * 100));
+      const fPct = Math.min(100, Math.round((sumF / targetF) * 100));
+
+      document.getElementById("kcal-val").innerText = `${sumKcal} / ${targetKcal} kcal`;
+      document.getElementById("kcal-rem").innerText = remKcal > 0 ? `${remKcal} kcal kald\u0131` : `Hedef Tamamland\u0131! \uD83C\uDF89`;
+      document.getElementById("kcal-bar").style.width = `${kcalPct}%`;
+
+      document.getElementById("p-val").innerText = `${sumP} / ${targetP}g`;
+      document.getElementById("p-pct").innerText = `%${pPct}`;
+      document.getElementById("p-bar").style.width = `${pPct}%`;
+
+      document.getElementById("c-val").innerText = `${sumC} / ${targetC}g`;
+      document.getElementById("c-pct").innerText = `%${cPct}`;
+      document.getElementById("c-bar").style.width = `${cPct}%`;
+
+      document.getElementById("f-val").innerText = `${sumF} / ${targetF}g`;
+      document.getElementById("f-pct").innerText = `%${fPct}`;
+      document.getElementById("f-bar").style.width = `${fPct}%`;
+
+      // Su guncellemesi
+      const glasses = appState.water[appState.currentDay] || 0;
+      const liters = (glasses * 0.25).toFixed(2).replace(".00", ".0").replace(".50", ".5");
+      document.getElementById("w-liters").innerText = `${liters} / 3.0 L`;
+      document.getElementById("w-glasses").innerText = glasses;
+
+      // Motivasyon mesaji
+      const motIcon = document.getElementById("mot-icon");
+      const motText = document.getElementById("mot-text");
+      const nightLocked = !!appState.checked[`${appState.currentDay}_4`];
+
+      if (doneCount === 0) {
+        motIcon.innerText = "\uD83D\uDE80";
+        motText.innerText = "Yeni g\u00FCne haz\u0131rs\u0131n Mehmet! Saat 10:30 kahvalt\u0131s\u0131yla glisemik kalkan\u0131 ba\u015Flat, kan \u015Fekerini g\u00FCn boyu dengede tut.";
+      } else if (doneCount < 3) {
+        motIcon.innerText = "\uD83D\uDD25";
+        motText.innerText = "Harika gidiyorsun! \u00D6\u011F\u00FCn aralar\u0131nda 4 saat kural\u0131n\u0131 koruyorsun, metabolizman ya\u011F yak\u0131m modunda.";
+      } else if (doneCount < 5) {
+        motIcon.innerText = "\u26A1";
+        motText.innerText = nightLocked
+          ? "Gece Kilidi aktif! Kalan \u00F6\u011F\u00FCn\u00FCn\u00FC de i\u015Faretleyip g\u00FCn\u00FC kusursuz kapatabilirsin."
+          : "G\u00FCn\u00FCn \u00E7o\u011Fu tamamland\u0131! Saat 23:30 Gece Kilidi \u00F6\u011F\u00FCn\u00FCn\u00FC unutma; sabaha kar\u015F\u0131 hipoglisemiyi tamamen kilitler.";
+      } else {
+        motIcon.innerText = "\uD83C\uDFC6";
+        motText.innerText = "5/5 Kusursuz G\u00FCn! Kas k\u00FCtleni korudun, ya\u011F yak\u0131m\u0131n\u0131 destekledin ve 23:30 Gece Kilidi ile uykuya %100 g\u00FCvende giriyorsun!";
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
